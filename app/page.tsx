@@ -156,7 +156,7 @@ function ChatContent() {
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">💬 Chat Rooms</h1>
-            <p className="text-gray-500">Real-time messaging made simple</p>
+            <p className="text-gray-600">Real-time messaging made simple</p>
           </div>
           
           <div className="space-y-4">
@@ -175,7 +175,7 @@ function ChatContent() {
             </button>
           </div>
           
-          <p className="text-center text-sm text-gray-400 mt-6">
+          <p className="text-center text-sm text-gray-500 mt-6">
             {isConnected ? '🟢 Connected to server' : '🔴 Connecting...'}
           </p>
         </div>
@@ -198,7 +198,7 @@ function ChatContent() {
           <div className="text-center mb-6">
             <div className="text-5xl mb-2">🎉</div>
             <h1 className="text-2xl font-bold text-gray-800">Create New Room</h1>
-            <p className="text-gray-500">Start a new chat room and invite friends</p>
+            <p className="text-gray-600">Start a new chat room and invite friends</p>
           </div>
           
           <form onSubmit={handleCreateRoom}>
@@ -245,7 +245,7 @@ function ChatContent() {
           <div className="text-center mb-6">
             <div className="text-5xl mb-2">🔗</div>
             <h1 className="text-2xl font-bold text-gray-800">Join Existing Room</h1>
-            <p className="text-gray-500">Enter a room code to join</p>
+            <p className="text-gray-600">Enter a room code to join</p>
           </div>
           
           <form onSubmit={handleJoinRoom}>
@@ -336,7 +336,7 @@ function ChatContent() {
               >
                 <span className="font-medium">{user.username}</span>
                 {user.id === socket?.id && (
-                  <span className="text-xs text-purple-600 ml-2">(you)</span>
+                  <span className="text-xs text-purple-700 ml-2 font-medium">(you)</span>
                 )}
               </li>
             ))}
@@ -348,7 +348,7 @@ function ChatContent() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.length === 0 ? (
-              <div className="text-center text-gray-400 mt-10">
+              <div className="text-center text-gray-500 mt-10">
                 <p className="text-4xl mb-2">💬</p>
                 <p>No messages yet. Start the conversation!</p>
               </div>
@@ -364,7 +364,7 @@ function ChatContent() {
                     <span className="font-medium text-sm text-gray-700">
                       {msg.username}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-500">
                       {new Date(msg.timestamp).toLocaleTimeString()}
                     </span>
                   </div>
