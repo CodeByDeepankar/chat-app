@@ -22,7 +22,7 @@ class SocketManager {
     if (!this.instance) {
       this.instance = io({
         path: '/socket.io',
-        transports: ['polling'],
+        transports: ['websocket'],
         reconnection: true,
         reconnectionAttempts: 3,
         reconnectionDelay: 2000,
@@ -79,10 +79,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       if (socket.connected) {
         setIsConnected(true);
       }
-
-      // Store listeners for cleanup
-      SocketManager.listeners.set('connect', [handleConnect]);
-      SocketManager.listeners.set('disconnect', [handleDisconnect]);
     }
 
     // Update connection state periodically for React state sync
