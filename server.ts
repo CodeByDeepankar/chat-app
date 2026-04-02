@@ -30,6 +30,8 @@ interface Room {
   messages: Message[];
 }
 
+const normalizeRoomId = (roomId: string) => roomId.trim().toUpperCase();
+
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
     const parsedUrl = parse(req.url || "/", true);
@@ -51,18 +53,27 @@ app.prepare().then(() => {
     console.log("Client connected:", socket.id);
 
     socket.on("join-room", ({ roomId, username }: { roomId: string; username: string }) => {
-      socket.join(roomId);
+      const normalizedRoomId = normalizeRoomId(roomId);
+      const normalizedUsername = username.trim();
+      if (!normalizedRoomId || !normalizedUsername) {
+        return;
+      }
+
+      socket.join(normalizedRoomId);
       
-      if (!rooms.has(roomId)) {
-        rooms.set(roomId, { id: roomId, users: new Map(), messages: [] });
+      if (!rooms.has(normalizedRoomId)) {
+        rooms.set(normalizedRoomId, { id: normalizedRoomId, users: new Map(), messages: [] });
       }
       
-      const room = rooms.get(roomId)!;
-      room.users.set(socket.id, { id: socket.id, username });
+      const room = rooms.get(normalizedRoomId)!;
+      room.users.set(socket.id, { id: socket.id, username: normalizedUsername });
 
       socket.emit("previous-messages", room.messages);
-      socket.emit("room-joined", { roomId, users: Array.from(room.users.values()) });
-      socket.to(roomId).emit("user-joined", { username, users: Array.from(room.users.values()) });
+      socket.emit("room-joined", { roomId: normalizedRoomId, users: Array.from(room.users.values()) });
+      socket.to(normalizedRoomId).emit("user-joined", {
+        username: normalizedUsername,
+        users: Array.from(room.users.values()),
+      });
     });
 
     socket.on("send-message", (message: Omit<Message, "id" | "timestamp">) => {
@@ -84,17 +95,18 @@ app.prepare().then(() => {
     });
 
     socket.on("leave-room", ({ roomId }: { roomId: string }) => {
-      const room = rooms.get(roomId);
+      const normalizedRoomId = normalizeRoomId(roomId);
+      const room = rooms.get(normalizedRoomId);
       if (room) {
         const user = room.users.get(socket.id);
         room.users.delete(socket.id);
-        socket.leave(roomId);
-        socket.to(roomId).emit("user-left", { 
+        socket.leave(normalizedRoomId);
+        socket.to(normalizedRoomId).emit("user-left", { 
           username: user?.username || "Unknown",
           users: Array.from(room.users.values())
         });
         if (room.users.size === 0) {
-          rooms.delete(roomId);
+          rooms.delete(normalizedRoomId);
         }
       }
     });

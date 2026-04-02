@@ -23,11 +23,12 @@ function ChatContent() {
   const [error, setError] = useState('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const normalizeRoomId = (value: string) => value.trim().toUpperCase();
 
   useEffect(() => {
     const roomParam = searchParams.get('room');
     if (roomParam) {
-      setRoomId(roomParam);
+      setRoomId(normalizeRoomId(roomParam));
       setView('join');
     }
   }, [searchParams]);
@@ -105,7 +106,9 @@ function ChatContent() {
       return;
     }
     setError('');
-    socket.emit('join-room', { roomId: roomId.toUpperCase(), username: username.trim() });
+    const normalizedRoomId = normalizeRoomId(roomId);
+    setRoomId(normalizedRoomId);
+    socket.emit('join-room', { roomId: normalizedRoomId, username: username.trim() });
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -138,7 +141,7 @@ function ChatContent() {
   const leaveRoom = () => {
     const activeRoomId = createdRoomId || roomId;
     if (socket) {
-      socket.emit('leave-room', { roomId: activeRoomId });
+      socket.emit('leave-room', { roomId: normalizeRoomId(activeRoomId) });
     }
     setView('landing');
     setRoomId('');
