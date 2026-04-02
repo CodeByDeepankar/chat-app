@@ -56,6 +56,9 @@ app.prepare().then(() => {
       const normalizedRoomId = normalizeRoomId(roomId);
       const normalizedUsername = username.trim();
       if (!normalizedRoomId || !normalizedUsername) {
+        socket.emit("join-error", {
+          message: "Please provide a valid room code and username.",
+        });
         return;
       }
 

@@ -45,6 +45,10 @@ function ChatContent() {
       setView('chat');
     });
 
+    socket.on('join-error', ({ message }: { message: string }) => {
+      setError(message);
+    });
+
     socket.on('previous-messages', (prevMessages: Message[]) => {
       setMessages(prevMessages);
     });
@@ -64,6 +68,7 @@ function ChatContent() {
     return () => {
       socket.off('connect');
       socket.off('room-joined');
+      socket.off('join-error');
       socket.off('previous-messages');
       socket.off('new-message');
       socket.off('user-joined');
