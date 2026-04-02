@@ -30,7 +30,8 @@ interface Room {
   messages: Message[];
 }
 
-const normalizeRoomId = (roomId: string) => roomId.trim().toUpperCase();
+const normalizeRoomId = (roomId: unknown) =>
+  typeof roomId === "string" ? roomId.trim().toUpperCase() : "";
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
@@ -54,7 +55,7 @@ app.prepare().then(() => {
 
     socket.on("join-room", ({ roomId, username }: { roomId: string; username: string }) => {
       const normalizedRoomId = normalizeRoomId(roomId);
-      const normalizedUsername = username.trim();
+      const normalizedUsername = typeof username === "string" ? username.trim() : "";
       if (!normalizedRoomId || !normalizedUsername) {
         socket.emit("join-error", {
           message: "Please provide a valid room code and username.",
